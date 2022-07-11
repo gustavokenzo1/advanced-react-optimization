@@ -1,34 +1,41 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Advanced React Optimization
 
-## Getting Started
+Mini project to practice good practices to make React apps faster, not focusing on CSS. Built using Next.js and a Fake API.
 
-First, run the development server:
+### How React Re-Rendering Works
+
+1. Create a new version of the component.
+2. Compare the new version to the old version.
+3. If there are differences, update what's needed.
+
+### How React Optimization Works
+
+Most Hooks shouldn't be used prematurely, as it can be slower for small components. Always test on React Dev Tools Profiler:
+
+- memo: used in ProductItem.tsx to avoid re-rendering the component when the props are the same, which makes it much faster on large amounts of components.
+
+- useMemo: used at first to calculate totalPrice, then changed it to when the API is called. Used to avoid re-rendering a component caused by a return value of a function with heavy calculations and/or when the return value of the function is passed to a child component.
+
+- useCallback: similar to useMemo, but used to memoize a function instead of a value. Suppose we have a function on a parent component. Every time the parent component is rendered, the function is re-created. If this function is passed to a child component, it will also re-render, because React uses Referential Equality.
+
+- lazy/dynamic: When bundling, all the code will be minified into one file. This isn't always good, because we can have an import that is only used by an user's action. If the user never uses what's imported, than we would have an unecessarily large file. React.lazy makes the imports dynamic, so they are only imported when they are used. For SSR, Next.js uses dynamic from 'next/dynamic'.
+
+- Virtualization: If we have a large component, with say 1000 items, we can use virtualization to render only a part of those items, like 20 items at a time, with an offset of 5 items, so when the user scrolls, we can keep rendering the previous/next items.
+
+# How to Run
+
+Frontend:
+
+```bash
+npm install
+```
 
 ```bash
 npm run dev
-# or
-yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Fake API:
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```bash
+npm run server
+```
